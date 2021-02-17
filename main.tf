@@ -32,8 +32,8 @@ locals {
   }
 
   merged_node_groups = {
-     for node_name in  keys(local.node_groups) :
-        node_name => merge(local.node_groups[node_name], {
+     for node_name, node_data in local.node_groups :
+        node_name => merge(node_data, {
            "node_name" = node_name, 
            "subnet" = local.subnets[node_name]
            "k8s_labels" = merge(local.node_groups[node_name].k8s_labels, {"name" = node_name})
