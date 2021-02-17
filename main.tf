@@ -1,7 +1,6 @@
 locals {
    node_groups = {
     vsps-sip-proxy-1-1 = {
-      node_group_name  = "vsps-sip-proxy-1-1"
       desired_capacity = 1
       max_capacity     = 1
       min_capacity     = 1
@@ -10,7 +9,6 @@ locals {
       additional_tags  = {}
     }
     vsps-sip-proxy-1-2 = {
-      node_group_name  = "vsps-sip-proxy-1-2"
       desired_capacity = 1
       max_capacity     = 1
       min_capacity     = 1
@@ -25,12 +23,13 @@ locals {
      vsps-sip-proxy-1-2 =  "some subnet 2"
   }
 
-  merged_node_groups = {
-     for group in local.node_groups :
-       group.node_group_name => merge(group, {"subnet" = local.subnets[group.node_group_name]})
-  }
-}
+  merged_node_groups = flatten([
+     for node_name in  keys(local.node_groups) : {
+        format("%s", node_name) = merge(local.node_groups[node_name], {"node_name" = node_name, "subnet" = local.subnets[node_name]})
+     }
+  ])
 
+}
 
 module "leo" {
    source = "./module"
