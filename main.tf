@@ -23,11 +23,10 @@ locals {
      vsps-sip-proxy-1-2 =  "some subnet 2"
   }
 
-  merged_node_groups = flatten([
-     for node_name in  keys(local.node_groups) : {
-        format("%s", node_name) = merge(local.node_groups[node_name], {"node_name" = node_name, "subnet" = local.subnets[node_name]})
-     }
-  ])
+  merged_node_groups = {
+     for node_name in  keys(local.node_groups) :
+        node_name => merge(local.node_groups[node_name], {"node_name" = node_name, "subnet" = local.subnets[node_name]})
+  }
 
 }
 
